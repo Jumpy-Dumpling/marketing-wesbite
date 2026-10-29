@@ -1,0 +1,21 @@
+---
+import { Image } from 'astro:assets';
+import mascot from '../assets/mascot.png';
+import { url } from '../lib/url';
+---
+<a class="sig" href={url()}>
+  <Image src={mascot} alt="" width={36} height={32} />
+  <span>A <strong>Jumpy Dumpling</strong> app</span>
+</a>
+<style>
+  .sig {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    padding: 0.4rem 1rem 0.4rem 0.6rem; border-radius: var(--radius-pill);
+    background: var(--jd-white); border: 1.5px solid var(--jd-dark);
+    color: var(--jd-dark); text-decoration: none; font-size: 0.9rem;
+    transition: transform var(--spring);
+  }
+  .sig:hover { transform: translateY(var(--lift)); color: var(--jd-dark); }
+  .sig strong { font-family: var(--font-heading); font-weight: 600; }
+  img { width: auto; height: 1.9rem; }
+</style>

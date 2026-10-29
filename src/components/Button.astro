@@ -1,0 +1,29 @@
+---
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary' | 'accent';
+  external?: boolean;
+}
+const { href, variant = 'primary', external = false } = Astro.props;
+---
+<a class={`btn btn-${variant}`} href={href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+  <slot />
+</a>
+<style>
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.8rem 1.5rem; border-radius: var(--radius-pill);
+    font: 600 1rem/1 var(--font-heading); text-decoration: none;
+    border: 2px solid var(--jd-dark);
+    box-shadow: var(--shadow-soft);
+    transition: transform var(--spring), box-shadow var(--spring), background 120ms;
+  }
+  .btn:hover { transform: translateY(var(--lift)); box-shadow: var(--shadow-lift); }
+  .btn:active { transform: translateY(0); }
+  .btn-primary { background: var(--jd-dark); color: var(--jd-cream); }
+  .btn-primary:hover { color: var(--jd-white); }
+  .btn-secondary { background: var(--jd-purple-ink); border-color: var(--jd-purple-ink); color: var(--jd-white); }
+  .btn-secondary:hover { color: var(--jd-white); background: var(--jd-purple); border-color: var(--jd-purple); }
+  .btn-accent { background: var(--jd-yellow); color: var(--jd-dark); }
+  .btn-accent:hover { color: var(--jd-dark); }
+</style>

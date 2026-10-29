@@ -1,0 +1,8 @@
+---
+/** Little yellow motion marks, purely decorative. */
+interface Props { class?: string }
+const { class: className = '' } = Astro.props;
+---
+<svg class={className} viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="var(--jd-yellow)" stroke-width="6" stroke-linecap="round">
+  <path d="M24 5v10" /><path d="M7 14l8 6" /><path d="M41 14l-8 6" />
+</svg>

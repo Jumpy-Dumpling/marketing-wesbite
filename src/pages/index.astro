@@ -1,0 +1,102 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import AppCard from '../components/AppCard.astro';
+import Spark from '../components/Spark.astro';
+import mascot from '../assets/mascot.png';
+import zac from '../assets/zac.jpg';
+import logo from '../assets/logo-banner.png';
+import { apps } from '../data/apps';
+import { url } from '../lib/url';
+import { absolute, SITE_NAME, TAGLINE, SITE_DESCRIPTION } from '../lib/seo';
+const homeUrl = absolute('', Astro.site);
+const orgId = `${homeUrl}#organization`;
+const jsonLd = [
+  {
+    '@type': 'Organization',
+    '@id': orgId,
+    name: SITE_NAME,
+    slogan: TAGLINE,
+    description: SITE_DESCRIPTION,
+    url: homeUrl,
+    logo: absolute('apple-touch-icon.png', Astro.site),
+    founder: { '@type': 'Person', name: 'Zac' },
+  },
+  { '@type': 'WebSite', '@id': `${homeUrl}#website`, name: SITE_NAME, url: homeUrl, description: SITE_DESCRIPTION, publisher: { '@id': orgId } },
+  {
+    '@type': 'ItemList',
+    name: `Apps by ${SITE_NAME}`,
+    itemListElement: apps.map((a, i) => ({ '@type': 'ListItem', position: i + 1, name: a.name, url: absolute(`apps/${a.slug}/`, Astro.site) })),
+  },
+];
+---
+<Base jsonLd={jsonLd}>
+  <section class="hero container">
+    <h1 class="sr-only">Jumpy Dumpling: Small apps. Big dreams.</h1>
+    <Image class="logo" src={logo} alt="Jumpy Dumpling, a smiling dumpling mid-jump. Small apps. Big dreams." width={1400} loading="eager" />
+    <p class="lede">A one-person studio making small, useful, slightly silly apps.</p>
+    <div class="cta">
+      <Button href="#apps" variant="primary">See the apps</Button>
+      <Button href="#letter" variant="accent">Read the note</Button>
+    </div>
+  </section>
+
+  <section id="apps" class="section container">
+    <div class="section-head">
+      <p class="label">The apps</p>
+      <h2>Things I have built and shipped (or am about to)</h2>
+    </div>
+    <div class="grid">
+      {apps.map((app) => <AppCard app={app} featured={apps.length === 1} />)}
+    </div>
+  </section>
+
+  <section id="letter" class="section container">
+    <article class="letter">
+      <aside class="aside">
+        <Spark class="spark" />
+        <div class="portrait">
+          <Image class="photo" src={zac} alt="Zac, the one person behind Jumpy Dumpling" width={420} />
+          <Image class="aside-mascot" src={mascot} alt="" width={120} />
+        </div>
+        <p class="label">A note from the kitchen</p>
+        <h2>Hi, I'm Zac.</h2>
+      </aside>
+      <div class="text">
+        <p>Jumpy Dumpling is where I keep the apps I make on my own. It is a studio of one, and a very small one at that.</p>
+        <p>I like software that is useful, opens quickly and does not nag. Some apps are bigger than others, though. Lifty has a dashboard and a content studio, so there is a little to learn. I try to make every screen earn its place and keep the first minute easy, so you can get started and grow into the rest.</p>
+        <p>The name? Dumplings are small, they are made by hand, and they are better than they have any right to be. That seemed like a good thing to aim for.</p>
+        <p>The first app is <a href={url('apps/lifty/')}>Lifty</a>, a strength tracker I wanted for myself. A moving app and a migraine diary are close behind, and more are simmering. Some will turn out well, some will quietly retire, and I will be honest about which is which.</p>
+        <p>Thanks for stopping by.</p>
+        <p class="sign hand">Zac</p>
+      </div>
+    </article>
+  </section>
+</Base>
+
+<style>
+  .hero { text-align: center; margin-top: clamp(1.5rem, 4vw, 2.5rem); padding-block: clamp(1.5rem, 5vw, 3.5rem) 0; position: relative; }
+  .hero::before { content: ''; position: absolute; z-index: -1; left: 50%; top: 0; width: min(46rem, 100%); aspect-ratio: 1.6;
+    transform: translateX(-50%); background: var(--jd-yellow-tint); border-radius: 50%; opacity: 0.7; filter: blur(2px); }
+  .logo { width: min(100%, 46rem); height: auto; margin-inline: auto; display: block; }
+  .lede { font-size: 1.3rem; color: var(--jd-muted); max-width: 32rem; margin: 0.75rem auto 1.75rem; }
+  .cta { display: flex; gap: 0.9rem; justify-content: center; flex-wrap: wrap; }
+
+  .grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); }
+
+
+  .letter { position: relative; display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(1.5rem, 5vw, 3.5rem);
+    align-items: center; background: var(--jd-white); border: 2px solid var(--jd-dark); border-radius: 28px;
+    padding: clamp(1.5rem, 5vw, 3.25rem); box-shadow: var(--shadow-soft); }
+  .aside { text-align: center; position: relative; }
+  .aside h2 { margin: 0.4rem 0 0; }
+  .portrait { position: relative; width: min(15rem, 80%); margin: 0 auto 1.5rem; }
+  .photo { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 28px; border: 2px solid var(--jd-dark); box-shadow: var(--shadow-soft); display: block; }
+  .aside-mascot { position: absolute; right: -2.25rem; bottom: -1.25rem; width: 6rem; height: auto; animation: hop 2.6s var(--spring) infinite; }
+  .letter :global(.spark) { position: absolute; top: -1rem; right: 0.5rem; width: 3rem; height: 3rem; transform: rotate(12deg); }
+  .text :global(p:last-of-type) { margin-bottom: 0; }
+  .sign { font-size: 2.4rem; line-height: 1; margin-top: 0.5rem; }
+  @keyframes hop { 0%, 70%, 100% { transform: translateY(0); } 80% { transform: translateY(-10px); } 90% { transform: translateY(0); } }
+  @media (max-width: 48rem) { .letter { grid-template-columns: 1fr; } }
+</style>

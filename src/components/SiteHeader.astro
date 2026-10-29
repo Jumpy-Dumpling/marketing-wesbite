@@ -1,0 +1,29 @@
+---
+import { Image } from 'astro:assets';
+import mascot from '../assets/mascot.png';
+import { url } from '../lib/url';
+---
+<header class="top">
+  <div class="container bar">
+    <a class="home" href={url()} aria-label="Jumpy Dumpling home">
+      <Image src={mascot} alt="" width={44} height={39} />
+      <span>Jumpy Dumpling</span>
+    </a>
+    <nav aria-label="Main">
+      <a href={url('#apps')}>Apps</a>
+      <a href={url('#letter')}>Hello</a>
+    </nav>
+  </div>
+</header>
+<style>
+  .top { position: sticky; top: 0; z-index: 5; padding-block: 0.75rem; background: rgb(255 248 225 / 0.94); border-bottom: 1.5px solid rgb(43 18 89 / 0.1); }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .home { display: inline-flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--jd-dark);
+    font: 700 1.25rem/1 var(--font-heading); }
+  .home:hover { color: var(--jd-dark); }
+  .home img { height: 2.4rem; width: auto; transition: transform var(--spring); }
+  .home:hover img { transform: translateY(-4px) rotate(-6deg); }
+  nav { display: flex; gap: 0.25rem; }
+  nav a { color: var(--jd-dark); font-weight: 700; text-decoration: none; padding: 0.45rem 0.95rem; border-radius: var(--radius-pill); transition: background 120ms, transform var(--spring); }
+  nav a:hover { background: var(--jd-purple-tint); color: var(--jd-purple-ink); transform: translateY(-2px); }
+</style>

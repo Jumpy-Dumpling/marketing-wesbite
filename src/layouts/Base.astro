@@ -1,0 +1,84 @@
+---
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import BrandSignature from '../components/BrandSignature.astro';
+import { url } from '../lib/url';
+import { absolute, SITE_NAME, TAGLINE, SITE_DESCRIPTION } from '../lib/seo';
+
+interface Props {
+  /** Page title without the brand suffix. Omit on the home page. */
+  title?: string;
+  description?: string;
+  /** Path under public/, e.g. "og/lifty.png". Defaults to the studio card. */
+  image?: string;
+  imageAlt?: string;
+  ogType?: 'website' | 'article';
+  /** schema.org objects; they go out as one JSON-LD graph. */
+  jsonLd?: Record<string, unknown>[];
+  noindex?: boolean;
+  /** App pages show the "A Jumpy Dumpling app" signature instead of the full footer. */
+  compactFooter?: boolean;
+}
+const {
+  title,
+  description = SITE_DESCRIPTION,
+  image = 'og-default.png',
+  imageAlt = `${SITE_NAME}: ${TAGLINE}`,
+  ogType = 'website',
+  jsonLd = [],
+  noindex = false,
+  compactFooter = false,
+} = Astro.props;
+
+const fullTitle = title ? `${title} · ${SITE_NAME}` : `${SITE_NAME} · ${TAGLINE}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'http://localhost:4321').href;
+const imageUrl = absolute(image, Astro.site);
+const graph = jsonLd.length ? { '@context': 'https://schema.org', '@graph': jsonLd } : null;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Zac" />
+    <meta name="theme-color" content="#fff8e1" />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/png" href={url('favicon.png')} />
+    <link rel="apple-touch-icon" href={url('apple-touch-icon.png')} />
+    <link rel="sitemap" href={url('sitemap-index.xml')} />
+
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+
+    {graph && <script type="application/ld+json" set:html={JSON.stringify(graph)} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <SiteHeader />
+    <main id="main"><slot /></main>
+    {compactFooter ? (
+      <div class="container signature"><BrandSignature /></div>
+    ) : <SiteFooter />}
+  </body>
+</html>
+<style>
+  .signature { padding-block: 3rem 4rem; text-align: center; }
+</style>

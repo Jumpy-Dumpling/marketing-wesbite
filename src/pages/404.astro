@@ -1,0 +1,19 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import mascot from '../assets/mascot.png';
+import { url } from '../lib/url';
+---
+<Base title="Page not found" noindex>
+  <section class="container nf">
+    <Image src={mascot} alt="" width={220} />
+    <h1>Oops, this dumpling rolled away.</h1>
+    <p>That page doesn't exist, but the rest of the steamer is right here.</p>
+    <Button href={url()} variant="primary">Back home</Button>
+  </section>
+</Base>
+<style>
+  .nf { text-align: center; padding-block: 4rem; }
+  .nf img { width: 11rem; height: auto; margin: 0 auto 1rem; display: block; }
+</style>

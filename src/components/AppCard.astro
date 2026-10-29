@@ -1,0 +1,55 @@
+---
+import { Image } from 'astro:assets';
+import Badge from './Badge.astro';
+import type { App } from '../data/apps';
+import { url } from '../lib/url';
+interface Props { app: App; featured?: boolean }
+const { app, featured = false } = Astro.props;
+const page = url(`apps/${app.slug}/`);
+---
+<article class:list={['card', { featured }]} style={`--app-tint:${app.accentTint};--app-accent:${app.accent}`}>
+  <Image class="icon" src={app.icon} alt="" width={featured ? 112 : 72} height={featured ? 112 : 72} />
+  <div class="body">
+    <h3><a href={page} class="stretch">{app.name}</a></h3>
+    <p>{app.blurb}</p>
+    <div class="meta">
+      <Badge tone={app.status === 'Out now' ? 'mint' : 'yellow'}>{app.status}</Badge>
+      {app.stores.map((s) =>
+        s.href ? <a class="store" href={s.href}>{s.label}</a> : <span class="store soon">{s.label}: soon</span>
+      )}
+    </div>
+  </div>
+  {featured && (
+    <ul class="chips" aria-label={`${app.name} highlights`}>
+      {app.features.slice(0, 4).map((f) => <li>{f.title}</li>)}
+    </ul>
+  )}
+</article>
+<style>
+  .card {
+    position: relative; display: flex; gap: 1.1rem; align-items: flex-start;
+    background: var(--jd-card); border: 2px solid var(--jd-dark); border-radius: var(--radius-card);
+    padding: 1.4rem; box-shadow: var(--shadow-soft);
+    transition: transform var(--spring), box-shadow var(--spring);
+  }
+  .card:hover, .card:focus-within { transform: translateY(var(--lift)); box-shadow: var(--shadow-lift); }
+  .icon { border-radius: 18px; flex: none; border: 2px solid var(--jd-dark); background: var(--app-tint); }
+  h3 { margin-bottom: 0.3rem; }
+  h3 a { color: var(--jd-dark); text-decoration: none; }
+  .stretch::after { content: ''; position: absolute; inset: 0; border-radius: var(--radius-card); }
+  p { margin-bottom: 0.9rem; color: var(--jd-muted); }
+  .meta { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+  .store { font-weight: 700; font-size: 0.9rem; position: relative; z-index: 1; }
+  .soon { color: var(--jd-muted); }
+
+  .card.featured { grid-column: 1 / -1; align-items: center; gap: 1.75rem; padding: clamp(1.4rem, 4vw, 2.25rem); }
+  .featured .body { flex: 1 1 18rem; }
+  .featured h3 { font-size: 1.9rem; }
+  .featured p { font-size: 1.1rem; max-width: 30rem; }
+  .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; flex: 1 1 14rem; justify-content: flex-end; }
+  .chips li { background: var(--jd-white); border: 1.5px solid var(--jd-dark); border-radius: var(--radius-pill); padding: 0.4rem 0.9rem; font-weight: 700; font-size: 0.9rem; }
+  @media (max-width: 40rem) {
+    .card.featured { flex-wrap: wrap; }
+    .chips { justify-content: flex-start; }
+  }
+</style>

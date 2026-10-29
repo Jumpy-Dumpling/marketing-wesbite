@@ -1,0 +1,57 @@
+---
+interface Props {
+  /** Absolute URL of the page being shared. */
+  href: string;
+  text: string;
+}
+const { href, text } = Astro.props;
+const u = encodeURIComponent(href);
+const t = encodeURIComponent(text);
+const links = [
+  { label: 'X', href: `https://twitter.com/intent/tweet?text=${t}&url=${u}` },
+  { label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${u}` },
+  { label: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}` },
+  { label: 'Email', href: `mailto:?subject=${t}&body=${u}` },
+];
+---
+<div class="share" data-url={href} data-text={text}>
+  <h2 class="h3">Share this app</h2>
+  <ul>
+    <li><button type="button" class="pill native" hidden>Share…</button></li>
+    {links.map((l) => (
+      <li><a class="pill" href={l.href} target="_blank" rel="noopener noreferrer" aria-label={`Share on ${l.label}`}>{l.label}</a></li>
+    ))}
+    <li><button type="button" class="pill copy">Copy link</button></li>
+  </ul>
+  <p class="status" role="status" aria-live="polite"></p>
+</div>
+<script>
+  document.querySelectorAll<HTMLElement>('.share').forEach((el) => {
+    const { url = '', text = '' } = el.dataset;
+    const status = el.querySelector('.status')!;
+    const native = el.querySelector<HTMLButtonElement>('.native')!;
+    if (navigator.share) {
+      native.hidden = false;
+      native.addEventListener('click', () => navigator.share({ url, text, title: text }).catch(() => {}));
+    }
+    el.querySelector('.copy')!.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(url);
+        status.textContent = 'Link copied.';
+      } catch {
+        status.textContent = url;
+      }
+    });
+  });
+</script>
+<style>
+  .share { text-align: center; }
+  .h3 { font-size: 1.3rem; }
+  ul { list-style: none; display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; padding: 0; margin: 0.75rem 0 0; }
+  .pill { font: 700 0.95rem/1 var(--font-body); color: var(--jd-dark); background: var(--jd-white); border: 2px solid var(--jd-dark);
+    border-radius: var(--radius-pill); padding: 0.6rem 1.1rem; text-decoration: none; cursor: pointer;
+    transition: transform var(--spring), background 120ms; display: inline-block; }
+  .pill:hover { transform: translateY(var(--lift)); background: var(--jd-purple-tint); color: var(--jd-dark); }
+  .native { background: var(--jd-yellow); }
+  .status { min-height: 1.5rem; margin: 0.5rem 0 0; color: var(--jd-muted); font-weight: 700; }
+</style>

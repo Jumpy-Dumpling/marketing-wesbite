@@ -1,0 +1,22 @@
+---
+import { Image } from 'astro:assets';
+import mascot from '../assets/mascot.png';
+import BrandSignature from './BrandSignature.astro';
+---
+<footer class="foot">
+  <div class="container inner">
+    <Image class="mascot" src={mascot} alt="The Jumpy Dumpling mascot, mid-jump" width={120} height={107} />
+    <div>
+      <p class="hand line">Thanks for stopping by.</p>
+      <p class="small">&copy; {new Date().getFullYear()} Zac. Made with care and a suspicious amount of tea.</p>
+      <BrandSignature />
+    </div>
+  </div>
+</footer>
+<style>
+  .foot { margin-top: var(--space-section); padding-block: 3rem; background: var(--jd-yellow-tint); border-top: 2px solid var(--jd-dark); }
+  .inner { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+  .mascot { width: 7.5rem; height: auto; }
+  .line { font-size: 1.9rem; margin: 0; line-height: 1.1; }
+  .small { color: var(--jd-muted); font-size: 0.95rem; margin: 0.3rem 0 1rem; }
+</style>
